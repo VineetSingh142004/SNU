@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sigma Nu — Delta Theta Chapter · Knox College</title>
+    <meta
+      name="description"
+      content="Sigma Nu Fraternity, Delta Theta Chapter at Knox College — the oldest continuously running chapter of Sigma Nu in the world. Love, Honor, Truth since 1869."
+    />
+    <meta name="theme-color" content="#050505" />
+    <meta property="og:title" content="Sigma Nu — Delta Theta · Knox College" />
+    <meta property="og:description" content="Excelling with Honor. The oldest continuously running chapter of Sigma Nu in the world." />
+    <meta property="og:image" content="img/fireworks.webp" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <script>
+      document.documentElement.classList.replace('no-js', 'js');
+    </script>
+  </head>
+  <body>
+    <!-- ============ LOADER ============ -->
+    <div class="loader" aria-hidden="true">
+      <div class="loader__emblem" data-emblem></div>
+      <div class="loader__mark">ΣΝ</div>
+      <div class="loader__meta">
+        <span>Delta Theta</span>
+        <span class="loader__count"><span data-count>000</span></span>
+        <span>Est. 1869</span>
+      </div>
+    </div>
+
+    <!-- The Serpent lives on this canvas, behind every dark section. -->
+    <canvas class="serpent-canvas" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+      <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="header__burger"><i></i><i></i></span><span class="header__menu-label">Menu</span>
+      </button>
+      <a class="header__logo" href="#top" aria-label="Sigma Nu Delta Theta — home">
+        <span class="header__greek">ΣΝ</span>
+        <span class="header__sub">Delta Theta</span>
+      </a>
+      <a class="header__cta" href="#rush" data-cursor="link">Rush <span>ΣΝ</span></a>
+    </header>
+
+    <!-- ============ MENU ============ -->
+    <nav class="menu" id="menu" aria-label="Main" aria-hidden="true">
+      <div class="menu__inner">
+        <ol class="menu__list">
+          <li><a href="#chapter" data-img="img/about-main.webp"><em>i.</em><span>The Chapter</span></a></li>
+          <li><a href="#history" data-img="img/knox-1900s.webp"><em>ii.</em><span>History</span></a></li>
+          <li><a href="#house" data-img="img/g-sparklers.webp"><em>iii.</em><span>Life in the House</span></a></li>
+          <li><a href="#tenets" data-img="img/truth.webp"><em>iv.</em><span>The Tenets</span></a></li>
+          <li><a href="#calendar" data-img="img/white-rose.webp"><em>v.</em><span>Calendar</span></a></li>
+          <li><a href="#honors" data-img="img/fireworks.webp"><em>vi.</em><span>Honors</span></a></li>
+          <li><a href="#brothers" data-img="img/legion-center.webp"><em>vii.</em><span>The Legion</span></a></li>
+          <li><a href="#rush" data-img="img/rush-card.webp"><em>viii.</em><span>Rush</span></a></li>
+        </ol>
+        <div class="menu__preview"><img alt="" src="img/about-main.webp" /></div>
+        <div class="menu__foot">
+          <span>Love · Honor · Truth</span>
+          <a href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener">Instagram — @sigmanu.dt</a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ============ 01 HERO ============ -->
+      <section class="hero dark" id="top" data-serpent>
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="hero__title">
+          <p class="eyebrow hero__eyebrow"><span>Sigma Nu Fraternity</span><span>Delta Theta Chapter</span></p>
+          <h1>
+            <span class="script hero__script" data-chars>Excelling with</span>
+            <span class="display hero__display" data-chars>Honor</span>
+          </h1>
+        </div>
+        <a class="hero__scroll" href="#legion" aria-label="Scroll down">
+          <span class="hero__scroll-ring"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" /></svg></span>
+        </a>
+        <p class="hero__place">Knox College <i>·</i> Galesburg, Illinois <i>·</i> Est. 1869</p>
+        <a class="hero__card" href="#rush" data-cursor="link">
+          <span class="hero__card-img"><img src="img/rush-card.webp" alt="" /></span>
+          <span class="hero__card-text"><b>Rush</b><span>Fall 2026</span><em>Join the Legion</em></span>
+        </a>
+      </section>
+
+      <!-- ============ 02 LEGION (zoom gallery) ============ -->
+      <section class="legion light" id="legion">
+        <div class="legion__stage">
+          <div class="legion__head">
+            <p class="eyebrow">A Legion<br />of Honor</p>
+            <h2 class="display display--md" data-lines>
+              <span class="line"><span>Of the finest</span></span>
+              <span class="line"><span>men at Knox</span></span>
+            </h2>
+          </div>
+          <figure class="legion__side legion__side--l"><img src="img/legion-left.webp" alt="A brother fixing his bow tie before formal" /></figure>
+          <figure class="legion__center"><img src="img/legion-center.webp" alt="Brothers in suits raising a toast together" /></figure>
+          <figure class="legion__side legion__side--r"><img src="img/legion-right.webp" alt="Cufflinks and a watch — dressed for the occasion" /></figure>
+          <p class="legion__caption"><span class="script">Brothers</span><span class="eyebrow">In the bond since 1891</span></p>
+        </div>
+      </section>
+
+      <!-- ============ 03 THE CHAPTER ============ -->
+      <section class="chapter light" id="chapter">
+        <div class="chapter__grid">
+          <div class="chapter__text">
+            <h2 class="display display--md chapter__title" data-lines>
+              <span class="line"><span>The oldest</span></span>
+              <span class="line"><span>continuously</span></span>
+              <span class="line"><span>running chapter</span></span>
+              <span class="line"><span>of Sigma Nu</span></span>
+              <span class="line"><span>in the world.</span></span>
+            </h2>
+            <span class="script chapter__script" data-chars>since 1891</span>
+          </div>
+          <figure class="chapter__main" data-parallax="-0.12"><img src="img/about-main.webp" alt="Collegiate brick hall framed by autumn trees" loading="lazy" /></figure>
+          <figure class="chapter__small" data-parallax="0.18"><img src="img/about-small.webp" alt="Rows of antique leather-bound books" loading="lazy" /></figure>
+          <p class="body chapter__body" data-fade>
+            Delta Theta began at Lombard College in Galesburg in 1867 and entered Sigma Nu in 1891. When Lombard closed in 1930, the
+            brothers carried the charter across town to Knox — and the chapter has never gone dark since. Today it is the longest
+            continuously running chapter at Knox College, and the oldest continuously running Sigma Nu chapter anywhere.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 04 BONDS (full-bleed sequence) ============ -->
+      <section class="bonds" id="bonds">
+        <div class="bonds__stage">
+          <figure class="bonds__img"><img src="img/bonds-1.webp" alt="Four brothers sitting together on a hillside" loading="lazy" /></figure>
+          <figure class="bonds__img"><img src="img/bonds-2.webp" alt="Brothers gathered around a fire at dusk" loading="lazy" /></figure>
+          <figure class="bonds__img"><img src="img/bonds-3.webp" alt="A bonfire burning against a night sky" loading="lazy" /></figure>
+          <figure class="bonds__img"><img src="img/bonds-4.webp" alt="Brothers crossing an old iron bridge together" loading="lazy" /></figure>
+          <div class="bonds__caption">
+            <h2 class="display display--md" data-lines>
+              <span class="line"><span>Some bonds</span></span>
+              <span class="line"><span>outlast a lifetime</span></span>
+            </h2>
+            <p class="eyebrow">Brothers for four years <i>·</i> Knights for life</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 05 HISTORY (the Serpent returns) ============ -->
+      <section class="history dark" id="history" data-serpent>
+        <div class="history__intro">
+          <h2 class="display display--lg history__words" data-words>
+            Born at VMI, forged in honor, carried west to the prairie, and kept alive for over a century
+          </h2>
+          <figure class="history__img" data-rise><img src="img/history-portrait.webp" alt="Archival portrait of two gentlemen, early twentieth century" loading="lazy" /></figure>
+          <p class="body history__body" data-fade>
+            Sigma Nu was founded on January 1, 1869 at the Virginia Military Institute by James Frank Hopkins, Greenfield Quarles and
+            James McIlvaine Riley — cadets who rejected the hazing of their day and built a Legion of Honor instead. Hopkins modelled the
+            badge on the cross of the Légion d'honneur. At its heart, on black enamel, he set a golden coiled serpent.
+          </p>
+        </div>
+
+        <ol class="timeline">
+          <li><span class="timeline__year">1867</span><span class="script">Beginnings</span><p>Delta Theta is born at Lombard College, Galesburg, Illinois.</p></li>
+          <li><span class="timeline__year">1869</span><span class="script">The Legion</span><p>Sigma Nu is founded at VMI in Lexington, Virginia.</p></li>
+          <li><span class="timeline__year">1891</span><span class="script">The Charter</span><p>Delta Theta enters the Legion as a chapter of Sigma Nu.</p></li>
+          <li><span class="timeline__year">1930</span><span class="script">To Knox</span><p>Lombard closes. The brothers carry the charter to Knox College.</p></li>
+          <li><span class="timeline__year">Today</span><span class="script">Unbroken</span><p>135 years of Sigma Nu brotherhood — and counting.</p></li>
+        </ol>
+
+        <figure class="history__pano">
+          <div class="history__pano-frame"><img src="img/knox-1900s.webp" alt="Panorama of the Knox College campus in the early twentieth century" loading="lazy" /></div>
+          <figcaption class="eyebrow">Knox College, Galesburg — early 20th century <i>·</i> Library of Congress</figcaption>
+        </figure>
+      </section>
+
+      <!-- ============ 06 HONOR ============ -->
+      <section class="honor" id="creed">
+        <div class="honor__bg"><img src="img/honor.webp" alt="A knight's close helmet — a symbol of Sigma Nu" loading="lazy" /></div>
+        <div class="honor__text">
+          <p class="eyebrow" data-fade>The knight's code, the Legion's oath —<br />the feeling that can only be<br />captured by calling it</p>
+          <h2 class="script honor__script" data-chars>Honor</h2>
+        </div>
+      </section>
+
+      <!-- ============ 07 LIFE IN THE HOUSE (curved 3D ring) ============ -->
+      <section class="house" id="house">
+        <div class="house__stage">
+          <div class="house__title">
+            <span class="script" data-chars>Life in</span>
+            <h2 class="display display--lg" data-chars>The House</h2>
+          </div>
+          <div class="ring" data-cursor="drag"><div class="ring__track"></div></div>
+          <div class="house__foot">
+            <span class="house__count"><b data-ring-index>01</b> / <span data-ring-total>10</span></span>
+            <span class="house__label" data-ring-label>Golden hour</span>
+            <span class="eyebrow house__hint">Scroll or drag</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 08 TENETS (horizontal) ============ -->
+      <section class="tenets" id="tenets">
+        <div class="tenets__track">
+          <article class="tp tp--intro">
+            <figure class="tp__bg"><img src="img/brotherhood.webp" alt="Silhouettes of brothers on a ridge at sunset" loading="lazy" /></figure>
+            <div class="tp__card">
+              <h2 class="display display--xl">Tenets</h2>
+              <figure class="tp__card-img"><img src="img/white-rose.webp" alt="A white rose — the flower of Sigma Nu" loading="lazy" /></figure>
+              <p class="body">
+                What makes a man a Knight of Sigma Nu? Not a legacy, not a letter — a standard. Six tenets define the Delta Theta
+                brother, and every one of them is earned.
+              </p>
+            </div>
+          </article>
+
+          <article class="tp tp--edit">
+            <h3 class="tp__head"><span class="script">Unwavering</span><span class="display display--md">Love</span></h3>
+            <figure class="tp__img tp__img--wide"><img src="img/love.webp" alt="Brothers laughing together at golden hour" loading="lazy" /></figure>
+            <p class="body tp__body">
+              Love is the first word of the Creed. It is the brother who shows up at 2 a.m., the hand on your shoulder before a final,
+              the family you choose — and keep.
+            </p>
+          </article>
+
+          <article class="tp tp--bleed">
+            <figure class="tp__bg"><img src="img/legion-right.webp" alt="" loading="lazy" /></figure>
+          </article>
+
+          <article class="tp tp--edit tp--center">
+            <h3 class="tp__head"><span class="script">Knightly</span><span class="display display--md">Honor</span></h3>
+            <p class="body tp__body">
+              Sigma Nu was founded on the rejection of hazing. Honor here is not inherited — it is practised daily, in how we treat each
+              other, our campus and Galesburg.
+            </p>
+            <figure class="tp__img tp__img--low"><img src="img/g-fog.webp" alt="A lone figure walking a lamplit campus path in the fog" loading="lazy" /></figure>
+          </article>
+
+          <article class="tp tp--edit tp--trio">
+            <figure class="tp__img"><img src="img/truth.webp" alt="An ornate library reading room" loading="lazy" /></figure>
+            <figure class="tp__img"><img src="img/about-small.webp" alt="Antique books on a shelf" loading="lazy" /></figure>
+            <figure class="tp__img"><img src="img/scholarship.webp" alt="Students studying in a library" loading="lazy" /></figure>
+            <h3 class="tp__head tp__head--low"><span class="script">Relentless</span><span class="display display--md">Truth</span></h3>
+            <p class="body tp__body">
+              To serve in the light of truth: honest counsel, hard conversations, and a chapter that holds every man to the standard he
+              pledged.
+            </p>
+          </article>
+
+          <article class="tp tp--bleed">
+            <figure class="tp__bg"><img src="img/truth.webp" alt="" loading="lazy" /></figure>
+          </article>
+
+          <article class="tp tp--edit tp--caps">
+            <p class="caps">
+              Every brother is a scholar first. Study hours, mentorship from upperclassmen and alumni, and a house that treats the
+              library as home turf.
+            </p>
+            <figure class="tp__img"><img src="img/scholarship.webp" alt="" loading="lazy" /></figure>
+            <h3 class="tp__head tp__head--low"><span class="script">Academic</span><span class="display display--md">Excellence</span></h3>
+          </article>
+
+          <article class="tp tp--edit tp--service">
+            <figure class="tp__img tp__img--a"><img src="img/service.webp" alt="A volunteer carrying boxes of donations" loading="lazy" /></figure>
+            <h3 class="tp__head"><span class="script">Selfless</span><span class="display display--md">Service</span></h3>
+            <figure class="tp__img tp__img--b"><img src="img/g-field.webp" alt="A community softball game on a summer evening" loading="lazy" /></figure>
+            <p class="body tp__body">
+              From Galesburg food drives to campus clean-ups, the Legion serves the community that has hosted it for more than a
+              century.
+            </p>
+          </article>
+
+          <article class="tp tp--final">
+            <figure class="tp__bg"><img src="img/bonds-4.webp" alt="Brothers crossing an old bridge together" loading="lazy" /></figure>
+            <div class="tp__final-text">
+              <h3 class="tp__head"><span class="script">Lifelong</span><span class="display display--md">Brotherhood</span></h3>
+              <p class="caps">
+                The bond does not end at commencement. Delta Theta alumni span generations, careers and continents — and they still
+                answer the call.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ 09 CALENDAR ============ -->
+      <section class="calendar light" id="calendar">
+        <header class="section-head">
+          <span class="script" data-chars>The</span>
+          <h2 class="display display--lg" data-chars>Calendar</h2>
+          <p class="eyebrow">Fall 2026 <i>·</i> Spring 2027</p>
+        </header>
+        <!-- Sample schedule — edit dates and details to match the chapter's real calendar. -->
+        <ul class="events">
+          <li class="event" data-img="img/g-fog.webp">
+            <span class="event__date"><b>08</b><span>Sep</span></span>
+            <span class="event__title"><span class="script">Knox tradition</span><span class="display">Pumphandle</span></span>
+            <p class="event__desc">The whole campus shakes every hand on the first day. Find us at the front of the line.</p>
+            <span class="event__where">Knox Campus</span>
+          </li>
+          <li class="event" data-img="img/legion-center.webp">
+            <span class="event__date"><b>14</b><span>Sep</span></span>
+            <span class="event__title"><span class="script">Recruitment</span><span class="display">Fall Rush Week</span></span>
+            <p class="event__desc">Five nights at the house. Meet the brothers, ask anything, and find out if the Legion is for you.</p>
+            <span class="event__where">Sigma Nu House</span>
+          </li>
+          <li class="event" data-img="img/homecoming.webp">
+            <span class="event__date"><b>10</b><span>Oct</span></span>
+            <span class="event__title"><span class="script">Alumni</span><span class="display">Homecoming Tailgate</span></span>
+            <p class="event__desc">Generations of Delta Theta under one tent before kickoff.</p>
+            <span class="event__where">Knox Athletics</span>
+          </li>
+          <li class="event" data-img="img/g-field.webp">
+            <span class="event__date"><b>24</b><span>Oct</span></span>
+            <span class="event__title"><span class="script">Philanthropy</span><span class="display">Charity Softball Classic</span></span>
+            <p class="event__desc">Nine innings, open to every team on campus. Every dollar goes to a Galesburg cause.</p>
+            <span class="event__where">Intramural Fields</span>
+          </li>
+          <li class="event" data-img="img/white-rose.webp">
+            <span class="event__date"><b>14</b><span>Nov</span></span>
+            <span class="event__title"><span class="script">Formal</span><span class="display">White Rose Formal</span></span>
+            <p class="event__desc">Black tie and white roses — the flower of Sigma Nu.</p>
+            <span class="event__where">Galesburg</span>
+          </li>
+          <li class="event" data-img="img/fireworks.webp">
+            <span class="event__date"><b>01</b><span>Jan</span></span>
+            <span class="event__title"><span class="script">Since 1869</span><span class="display">Founders' Day</span></span>
+            <p class="event__desc">Honoring Hopkins, Quarles and Riley on the day the Legion was born.</p>
+            <span class="event__where">Chapter-wide</span>
+          </li>
+          <li class="event" data-img="img/g-slide.webp">
+            <span class="event__date"><b>??</b><span>Spring</span></span>
+            <span class="event__title"><span class="script">Date classified</span><span class="display">Flunk Day</span></span>
+            <p class="event__desc">Knox's best-kept secret. When the bells ring, the house is ready.</p>
+            <span class="event__where">Everywhere</span>
+          </li>
+        </ul>
+        <div class="event-float" aria-hidden="true"><img alt="" /></div>
+      </section>
+
+      <!-- ============ 10 HONORS ============ -->
+      <section class="honors" id="honors">
+        <div class="honors__mark" aria-hidden="true">ΣΝ</div>
+        <header class="section-head section-head--dark">
+          <span class="script" data-chars>The</span>
+          <h2 class="display display--lg" data-chars>Honors</h2>
+        </header>
+        <div class="stats">
+          <div class="stat"><b data-counter="1869">1869</b><span>Sigma Nu founded at the Virginia Military Institute</span></div>
+          <div class="stat"><b data-counter="1891">1891</b><span>Delta Theta enters the Legion</span></div>
+          <div class="stat"><b data-counter="135">135</b><span>Years of unbroken Sigma Nu brotherhood</span></div>
+          <div class="stat"><b data-counter="235" data-suffix="K+">235K+</b><span>Brothers initiated nationwide since 1869</span></div>
+        </div>
+        <ul class="laurels">
+          <li><span class="laurels__no">I</span><p>Oldest continuously running Sigma Nu chapter in the world</p><span class="eyebrow">Sigma Nu Fraternity</span></li>
+          <li><span class="laurels__no">II</span><p>Longest continuously running chapter at Knox College</p><span class="eyebrow">Knox College</span></li>
+          <li><span class="laurels__no">III</span><p>Over a century of leadership in academics, athletics &amp; service</p><span class="eyebrow">Galesburg, Illinois</span></li>
+          <li><span class="laurels__no">IV</span><p>Founded on the rejection of hazing — a Legion of Honor since 1869</p><span class="eyebrow">Our founders</span></li>
+        </ul>
+      </section>
+
+      <!-- ============ 11 THE LEGION (members) ============ -->
+      <section class="brothers light" id="brothers">
+        <header class="section-head">
+          <span class="script" data-chars>The</span>
+          <h2 class="display display--lg" data-chars>Legion</h2>
+          <p class="eyebrow">Executive Council <i>·</i> 2026 — 2027</p>
+        </header>
+        <!-- Placeholder names and portraits — swap in the real council. -->
+        <div class="roster">
+          <article class="brother"><figure><img src="img/m1.webp" alt="Portrait of Ethan Caldwell" loading="lazy" /></figure><span class="script">Commander</span><h3>Ethan Caldwell</h3><p>Class of 2027 · Political Science</p></article>
+          <article class="brother"><figure><img src="img/m2.webp" alt="Portrait of Marcus Reed" loading="lazy" /></figure><span class="script">Lt. Commander</span><h3>Marcus Reed</h3><p>Class of 2027 · Economics</p></article>
+          <article class="brother"><figure><img src="img/m3.webp" alt="Portrait of Julian Park" loading="lazy" /></figure><span class="script">Recorder</span><h3>Julian Park</h3><p>Class of 2028 · English</p></article>
+          <article class="brother"><figure><img src="img/m4.webp" alt="Portrait of Owen Mitchell" loading="lazy" /></figure><span class="script">Treasurer</span><h3>Owen Mitchell</h3><p>Class of 2027 · Business</p></article>
+          <article class="brother"><figure><img src="img/m5.webp" alt="Portrait of Daniel Okafor" loading="lazy" /></figure><span class="script">Marshal</span><h3>Daniel Okafor</h3><p>Class of 2028 · Biology</p></article>
+          <article class="brother"><figure><img src="img/m6.webp" alt="Portrait of Luke Harrington" loading="lazy" /></figure><span class="script">Chaplain</span><h3>Luke Harrington</h3><p>Class of 2028 · Philosophy</p></article>
+          <article class="brother"><figure><img src="img/m7.webp" alt="Portrait of Samuel Ortiz" loading="lazy" /></figure><span class="script">Sentinel</span><h3>Samuel Ortiz</h3><p>Class of 2029 · Computer Science</p></article>
+          <article class="brother"><figure><img src="img/m8.webp" alt="Portrait of Noah Bennett" loading="lazy" /></figure><span class="script">Risk Reduction</span><h3>Noah Bennett</h3><p>Class of 2028 · History</p></article>
+        </div>
+      </section>
+
+      <!-- ============ 12 THE CREED (slider) ============ -->
+      <section class="creed light" id="the-creed">
+        <div class="creed__slides" aria-live="polite">
+          <blockquote class="creed__slide is-active">
+            <p class="display display--md">To believe in<br />the life of</p>
+            <span class="script">Love</span>
+          </blockquote>
+          <blockquote class="creed__slide">
+            <p class="display display--md">To walk in<br />the way of</p>
+            <span class="script">Honor</span>
+          </blockquote>
+          <blockquote class="creed__slide">
+            <p class="display display--md">To serve in<br />the light of</p>
+            <span class="script">Truth</span>
+          </blockquote>
+        </div>
+        <div class="creed__foot">
+          <button class="creed__btn" type="button" data-creed="prev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg></button>
+          <span class="creed__count"><b data-creed-index>1</b> — 3</span>
+          <button class="creed__btn" type="button" data-creed="next" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg></button>
+        </div>
+        <p class="creed__cite eyebrow">The Creed of Sigma Nu <i>·</i> Walter J. Sears</p>
+      </section>
+
+      <!-- ============ 13 NULLI SECUNDUS ============ -->
+      <section class="finale" id="finale">
+        <div class="finale__bg"><img src="img/finale.webp" alt="Golden fireworks over a dark sky" loading="lazy" /></div>
+        <canvas class="finale__sparks" aria-hidden="true"></canvas>
+        <div class="finale__text">
+          <h2>
+            <span class="display display--xl" data-chars>Second</span>
+            <span class="script finale__script" data-chars>to none</span>
+          </h2>
+          <p class="body" data-fade>
+            <i>Nulli secundus</i> — the motto of Sigma Nu's founding chapter. At Delta Theta it is not a boast. It is the standard we
+            renew every single year.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 14 RUSH ============ -->
+      <section class="rush light" id="rush">
+        <div class="rush__grid">
+          <div class="rush__intro">
+            <span class="script" data-chars>Join the</span>
+            <h2 class="display display--lg" data-chars>Legion</h2>
+            <p class="body">
+              Rush is open to every Knox man who wants more from his four years. No pressure, no hazing — ever. Leave your details and
+              a brother will reach out before Rush Week.
+            </p>
+            <dl class="rush__info">
+              <div><dt class="eyebrow">House</dt><dd>Sigma Nu House, Knox College<br />Galesburg, Illinois 61401</dd></div>
+              <div><dt class="eyebrow">Follow</dt><dd><a href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">@sigmanu.dt</a></dd></div>
+            </dl>
+          </div>
+          <form class="rush__form" novalidate>
+            <label class="field"><span>Full name</span><input name="name" autocomplete="name" required /></label>
+            <label class="field"><span>Knox email</span><input name="email" type="email" autocomplete="email" required /></label>
+            <div class="field-row">
+              <label class="field"><span>Class year</span>
+                <select name="year" required>
+                  <option value="" disabled selected>Select</option>
+                  <option>2027</option><option>2028</option><option>2029</option><option>2030</option>
+                </select>
+              </label>
+              <label class="field"><span>Phone or Instagram</span><input name="contact" /></label>
+            </div>
+            <label class="field"><span>Why Sigma Nu?</span><textarea name="why" rows="3"></textarea></label>
+            <button class="button" type="submit" data-cursor="link"><span>Request an invitation</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+            <p class="rush__thanks" hidden>
+              <span class="script">Thank you.</span>
+              A brother will be in touch before Rush Week.
+            </p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ FOOTER (the Serpent, one last time) ============ -->
+    <footer class="footer dark" id="footer" data-serpent>
+      <div class="footer__title">
+        <p class="eyebrow">The life, the way<br />and the light of</p>
+        <span class="script footer__script" data-chars>Sigma Nu</span>
+      </div>
+      <div class="footer__bar">
+        <span>© 2026 Sigma Nu — Delta Theta Chapter, Knox College</span>
+        <span class="footer__links">
+          <a href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.sigmanu.org/" target="_blank" rel="noopener">Sigma Nu Fraternity</a>
+          <button type="button" data-credits>Photo credits</button>
+        </span>
+        <span>Love <i>·</i> Honor <i>·</i> Truth</span>
+      </div>
+    </footer>
+
+    <dialog class="credits">
+      <div class="credits__inner">
+        <h2 class="display display--md">Photo credits</h2>
+        <ul class="credits__list"></ul>
+        <button type="button" class="button button--ghost" data-credits-close><span>Close</span></button>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
