@@ -43,11 +43,11 @@ export function emblemSVG() {
   <svg viewBox="0 0 200 200" role="img" aria-label="Coiled rattlesnake emblem">
     <defs>
       <linearGradient id="snGold" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#8a6a32"/>
-        <stop offset=".3" stop-color="#ecd49a"/>
-        <stop offset=".55" stop-color="#b88d43"/>
-        <stop offset=".8" stop-color="#f3dfaa"/>
-        <stop offset="1" stop-color="#9c7736"/>
+        <stop offset="0" stop-color="#9a7f28"/>
+        <stop offset=".3" stop-color="#f7e070"/>
+        <stop offset=".55" stop-color="#d8b62c"/>
+        <stop offset=".8" stop-color="#fff0a8"/>
+        <stop offset="1" stop-color="#a8871f"/>
       </linearGradient>
     </defs>
     <path class="emblem-stroke" d="${coil}" stroke-width="7.5"/>
@@ -56,7 +56,7 @@ export function emblemSVG() {
     ${rattle}
     <path class="emblem-stroke" d="${head}" stroke-width="1.6"/>
     <path class="emblem-stroke" d="M112 44.5 L124 43" stroke-width="0.9"/>
-    <circle cx="121" cy="41.8" r="1.5" fill="#ecd49a"/>
+    <circle cx="121" cy="41.8" r="1.5" fill="#ffe98a"/>
     <path class="emblem-stroke" d="M131 46 l7 -1.5 M138 44.5 l3 -2 M138 44.5 l3 1.4" stroke-width="0.8"/>
   </svg>`;
 }

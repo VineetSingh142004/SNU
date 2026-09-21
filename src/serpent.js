@@ -13,6 +13,7 @@
  */
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 
 const V3 = THREE.Vector3;
 const TAU = Math.PI * 2;
@@ -107,11 +108,12 @@ const GLSL_COMMON = /* glsl */ `
 // Palette (linear). Black enamel, antique gold, bronze.
 const GLSL_PALETTE = /* glsl */ `
   const vec3 SN_BLACK  = vec3(0.010, 0.009, 0.008);
-  const vec3 SN_CORE   = vec3(0.045, 0.032, 0.016);
-  const vec3 SN_GOLD   = vec3(0.86, 0.60, 0.22);
-  const vec3 SN_PALE   = vec3(0.95, 0.80, 0.50);
-  const vec3 SN_BRONZE = vec3(0.022, 0.016, 0.009);
-  const vec3 SN_BELLY  = vec3(0.42, 0.30, 0.13);
+  const vec3 SN_CORE   = vec3(0.030, 0.032, 0.038);
+  const vec3 SN_GOLD   = vec3(0.86, 0.88, 0.93);   // pavé silver (the poster's stones)
+  const vec3 SN_PALE   = vec3(0.98, 0.99, 1.00);   // white brilliant
+  const vec3 SN_ICE    = vec3(1.00, 1.00, 1.00);
+  const vec3 SN_BRONZE = vec3(0.016, 0.017, 0.020); // black stones on the flanks
+  const vec3 SN_BELLY  = vec3(0.40, 0.42, 0.46);    // brushed platinum belly
 `;
 
 function patchMaterial(material, { head = false, uniforms }) {
@@ -123,12 +125,44 @@ function patchMaterial(material, { head = false, uniforms }) {
       .replace(
         '#include <common>',
         `#include <common>
-        ${head ? 'varying vec3 vObj;' : 'attribute vec2 aSnake; varying vec2 vSnake;'}`
+        ${
+          head
+            ? `varying vec3 vObj;
+               attribute float aJaw;
+               uniform float uJaw;
+               // aJaw > 0: mandible (drops). aJaw < 0: maxilla (tips up).
+               vec3 snHinge(vec3 p, float a){
+                 vec2 pivot = vec2(-0.02, -0.58);   // (y, z) of the jaw joint
+                 float c = cos(a), s2 = sin(a);
+                 float dy = p.y - pivot.x, dz = p.z - pivot.y;
+                 return vec3(p.x, pivot.x + dy*c - dz*s2, pivot.y + dy*s2 + dz*c);
+               }`
+            : 'attribute vec2 aSnake; varying vec2 vSnake;'
+        }`
+      )
+      .replace(
+        '#include <beginnormal_vertex>',
+        `#include <beginnormal_vertex>
+        ${
+          head
+            ? `float jawA = uJaw * (aJaw > 0.0 ? aJaw : aJaw * 0.38);
+               objectNormal = snHinge(objectNormal + vec3(0.0, -0.02, -0.58), jawA) - vec3(0.0, -0.02, -0.58);`
+            : ''
+        }`
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
-        ${head ? 'vObj = position;' : 'vSnake = aSnake;'}`
+        ${
+          head
+            ? `vObj = position;
+               if (aJaw > 0.0) {
+                 vec3 pv = vec3(0.0, -0.02, -0.58);
+                 transformed = mix(transformed, pv + (transformed - pv) * vec3(0.86, 0.66, 0.96), uJaw * aJaw);
+               }
+               transformed = snHinge(transformed, jawA);`
+            : 'vSnake = aSnake;'
+        }`
       );
 
     shader.fragmentShader = shader.fragmentShader
@@ -139,6 +173,7 @@ function patchMaterial(material, { head = false, uniforms }) {
         uniform float uTailA;
         uniform float uBump;
         uniform float uGlow;
+        uniform float uTime;
         ${GLSL_COMMON}
         ${GLSL_PALETTE}
         float snH; float snMetal; float snRough; vec3 snCol;
@@ -165,6 +200,34 @@ function patchMaterial(material, { head = false, uniforms }) {
         `#include <normal_fragment_maps>
         normal = snPerturb(-vViewPosition, normal, snH * uBump);`
       );
+  };
+}
+
+const GLSL_HINGE = /* glsl */ `
+  attribute float aJaw;
+  uniform float uJaw;
+  vec3 snHinge(vec3 p, float a){
+    vec2 pivot = vec2(-0.02, -0.58);
+    float c = cos(a), s2 = sin(a);
+    float dy = p.y - pivot.x, dz = p.z - pivot.y;
+    return vec3(p.x, pivot.x + dy*c - dz*s2, pivot.y + dy*s2 + dz*c);
+  }
+`;
+
+/** Injects only the jaw articulation — for parts that ride the mouth (the lining). */
+function patchHinge(material, uniforms, key) {
+  material.customProgramCacheKey = () => key;
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>\n${GLSL_HINGE}`)
+      .replace(
+        '#include <beginnormal_vertex>',
+        `#include <beginnormal_vertex>
+         float jawA = uJaw * aJaw;
+         objectNormal = snHinge(objectNormal + vec3(0.0, -0.02, -0.58), jawA) - vec3(0.0, -0.02, -0.58);`
+      )
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed = snHinge(transformed, jawA);');
   };
 }
 
@@ -228,6 +291,27 @@ const BODY_PATTERN = /* glsl */ `
       metal = band; rough = mix(0.4, 0.24, band);
     }
 
+    // "Iced out": the whole body is pavé — every scale is a set stone, and a
+    // scattering of them catches the light at any moment.
+    vec2 micro = vec2(vSnake.x * 3.0, yv * 3.0);
+    float spark = snHash(floor(micro) + 7.3);
+    float twinkle = pow(0.5 + 0.5*sin(spark*44.0 + uTime*2.4), 5.0);
+    float isPave = step(0.62, m) * step(m, 0.9);
+    // white stones: bright, mirror-flat facets
+    if (spark > 0.74 && isPave > 0.5) {
+      col = mix(col, SN_ICE, 0.55 + 0.45*twinkle);
+      metal = 1.0;
+      rough = 0.015 + 0.05*(1.0 - twinkle);
+    } else if (isPave > 0.5) {
+      metal = 1.0;
+      rough = 0.09;
+    } else if (spark > 0.93) {
+      // black diamonds across the dark field
+      col = mix(col, vec3(0.22, 0.23, 0.26), 0.45 + 0.4*twinkle);
+      metal = 1.0;
+      rough = 0.05;
+    }
+
     // crevices between scales: darker, rougher
     col *= mix(1.0, 0.28, crev);
     rough = mix(rough, 0.75, crev*0.7);
@@ -263,6 +347,17 @@ const HEAD_PATTERN = /* glsl */ `
     vec3 col = mix(SN_BLACK, SN_GOLD, gold);
     float metal = gold;
     float rough = mix(0.4, 0.26, gold);
+    // cream chin and throat — the underside of a real rattlesnake's head
+    float chinF = smoothstep(-0.06, -0.15, o.y) * smoothstep(-0.7, -0.45, o.z);
+    col = mix(col, vec3(0.62, 0.55, 0.40), chinF);
+    metal = mix(metal, 0.15, chinF);
+    rough = mix(rough, 0.5, chinF);
+    float hspark = snHash(floor(o.xz*vec2(40.0, 34.0)) + 3.1);
+    if (hspark > 0.8 && gold > 0.25) {
+      float tw = pow(0.5 + 0.5*sin(hspark*51.0 + uTime*2.2), 6.0);
+      col = mix(col, SN_ICE, 0.5 + 0.5*tw);
+      metal = 1.0; rough = 0.03;
+    }
     col *= mix(1.0, 0.3, crev);
     rough = mix(rough, 0.7, crev*0.6);
 
@@ -277,6 +372,7 @@ const HEAD_PATTERN = /* glsl */ `
 function makeHeadGeometry() {
   const g = new THREE.SphereGeometry(1, 128, 96);
   const pos = g.attributes.position;
+  const jaw = new Float32Array(pos.count);
   const v = new V3();
   for (let i = 0; i < pos.count; i++) {
     v.fromBufferAttribute(pos, i);
@@ -292,7 +388,9 @@ function makeHeadGeometry() {
     // Triangular plan: broad venom-gland jowls, narrowing to the snout.
     const jowl = 1 + 0.4 * Math.exp(-Math.pow((z + 0.38) / 0.36, 2));
     const taper = 1 - 0.47 * smooth(-0.1, 1.0, z);
-    const w = 0.55 * jowl * taper;
+    // the mandible is slimmer than the cranium, so the open gape reads as a jaw
+    const chin = y < 0 ? 1 - 0.42 * smooth(0.0, -0.5, y) * smooth(-0.45, 0.5, z) : 1;
+    const w = 0.55 * jowl * taper * chin;
     let hgt = 0.27 + 0.07 * smooth(-0.35, 0.35, y);
     hgt *= 1 - 0.3 * smooth(0.2, 1.0, z);
     hgt *= 1 + 0.16 * Math.exp(-Math.pow((z + 0.45) / 0.4, 2));
@@ -312,8 +410,39 @@ function makeHeadGeometry() {
     x *= 1 - 0.03 * groove;
 
     pos.setXYZ(i, x, y, z);
+    // Jaw weight: +1 mandible (swings down), negative = maxilla (tips up).
+    const gate = smooth(-0.72, -0.5, z);
+    const lower = smooth(-0.01, -0.06, y);
+    const upper = smooth(0.15, 0.6, z) * smooth(-0.02, 0.07, y);
+    jaw[i] = lower > 0 ? lower * gate : -0.8 * upper * gate;
+  }
+  g.setAttribute('aJaw', new THREE.BufferAttribute(jaw, 1));
+  g.computeVertexNormals();
+  return g;
+}
+
+/** A curved pit-viper fang: long, hollow-looking, ivory. */
+function makeFang(len = 0.5) {
+  const g = new THREE.ConeGeometry(0.052, len, 20, 10);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i);
+    let y = p.getY(i);
+    const z = p.getZ(i);
+    const t = (len / 2 - y) / len; // 0 at base, 1 at tip
+    // sabre curve + a sharper taper toward the point
+    const bend = -Math.pow(t, 2) * len * 0.42;
+    const shrink = 1 - 0.55 * Math.pow(t, 1.6);
+    p.setXYZ(i, x * shrink, y, z * shrink + bend);
   }
   g.computeVertexNormals();
+  g.translate(0, -len / 2, 0); // hinge at the base
+  return g;
+}
+
+function makeTooth() {
+  const g = new THREE.ConeGeometry(0.022, 0.1, 10, 1);
+  g.translate(0, 0.05, 0);
   return g;
 }
 
@@ -324,15 +453,15 @@ function makeEyeTexture() {
   const g = c.getContext('2d');
   // iris — molten gold with radial striations
   const grd = g.createLinearGradient(0, 0, 0, 256);
-  grd.addColorStop(0, '#3a2408');
-  grd.addColorStop(0.5, '#d9a441');
-  grd.addColorStop(1, '#3a2408');
+  grd.addColorStop(0, '#0d1117');
+  grd.addColorStop(0.5, '#cfe0f2');
+  grd.addColorStop(1, '#0d1117');
   g.fillStyle = grd;
   g.fillRect(0, 0, 512, 256);
   for (let i = 0; i < 900; i++) {
     const x = Math.random() * 512;
     const y = Math.random() * 256;
-    g.strokeStyle = `rgba(${Math.random() > 0.5 ? '255,214,130' : '60,30,5'},${Math.random() * 0.25})`;
+    g.strokeStyle = `rgba(${Math.random() > 0.5 ? '255,255,255' : '20,28,40'},${Math.random() * 0.3})`;
     g.lineWidth = Math.random() * 1.5;
     g.beginPath();
     g.moveTo(x, y);
@@ -382,8 +511,8 @@ function makeRattle() {
     p.setXYZ(i, x * pinch, y, z * (0.85 + 0.15 * Math.abs(y)));
   }
   geo.computeVertexNormals();
-  const base = new THREE.Color('#c9a462');
-  const tip = new THREE.Color('#4a3519');
+  const base = new THREE.Color('#e8eaf0');
+  const tip = new THREE.Color('#4a4e57');
   let z = 0.0;
   for (let k = 0; k < count; k++) {
     const f = k / (count - 1);
@@ -395,7 +524,7 @@ function makeRattle() {
       clearcoat: 0.7,
       clearcoatRoughness: 0.3,
       sheen: 0.4,
-      sheenColor: new THREE.Color('#f3dca6'),
+      sheenColor: new THREE.Color('#eef3ff'),
     });
     const seg = new THREE.Mesh(geo, mat);
     seg.scale.set(size * 0.62, size * 1.12, size * 0.6);
@@ -411,8 +540,8 @@ function makeDustTexture() {
   c.width = c.height = 64;
   const g = c.getContext('2d');
   const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grd.addColorStop(0, 'rgba(255,230,170,1)');
-  grd.addColorStop(0.25, 'rgba(230,180,90,0.6)');
+  grd.addColorStop(0, 'rgba(255,255,255,1)');
+  grd.addColorStop(0.25, 'rgba(206,222,255,0.6)');
   grd.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = grd;
   g.fillRect(0, 0, 64, 64);
@@ -420,6 +549,68 @@ function makeDustTexture() {
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
+
+/* ------------------------------------------------------------------ */
+/* Post: bloom + cross-star flares — the "iced out" sparkle            */
+/* ------------------------------------------------------------------ */
+
+const QUAD_VERT = /* glsl */ `
+  varying vec2 vUv;
+  void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
+`;
+
+const BRIGHT_FRAG = /* glsl */ `
+  uniform sampler2D tDiffuse; uniform float uThresh; varying vec2 vUv;
+  void main(){
+    vec3 c = texture2D(tDiffuse, vUv).rgb;
+    float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+    gl_FragColor = vec4(c * smoothstep(uThresh, uThresh + 0.28, l), 1.0);
+  }
+`;
+
+const BLUR_FRAG = /* glsl */ `
+  uniform sampler2D tDiffuse; uniform vec2 uDir; varying vec2 vUv;
+  void main(){
+    float w[5]; w[0]=0.227; w[1]=0.194; w[2]=0.121; w[3]=0.054; w[4]=0.016;
+    vec3 acc = texture2D(tDiffuse, vUv).rgb * w[0];
+    for (int i = 1; i < 5; i++) {
+      vec2 o = uDir * float(i) * 1.3;
+      acc += (texture2D(tDiffuse, vUv + o).rgb + texture2D(tDiffuse, vUv - o).rgb) * w[i];
+    }
+    gl_FragColor = vec4(acc, 1.0);
+  }
+`;
+
+// A single directional streak — two of these crossed give the 4-point diamond star.
+const STREAK_FRAG = /* glsl */ `
+  uniform sampler2D tDiffuse; uniform vec2 uDir; varying vec2 vUv;
+  void main(){
+    vec3 acc = vec3(0.0); float wsum = 0.0;
+    for (int i = 0; i < 16; i++) {
+      float f = float(i);
+      float w = pow(0.82, f);
+      acc += texture2D(tDiffuse, vUv + uDir * f).rgb * w;
+      acc += texture2D(tDiffuse, vUv - uDir * f).rgb * w;
+      wsum += 2.0 * w;
+    }
+    gl_FragColor = vec4(acc / wsum * 2.2, 1.0);
+  }
+`;
+
+const COMP_FRAG = /* glsl */ `
+  uniform sampler2D tScene, tGlow, tS1, tS2;
+  uniform float uGlowAmt, uStarAmt;
+  varying vec2 vUv;
+  void main(){
+    vec3 c = texture2D(tScene, vUv).rgb;
+    c += texture2D(tGlow, vUv).rgb * uGlowAmt;
+    c += (texture2D(tS1, vUv).rgb + texture2D(tS2, vUv).rgb) * uStarAmt;
+    gl_FragColor = vec4(c, 1.0);
+  }
+`;
+
+const quadMat = (frag, uniforms) =>
+  new THREE.ShaderMaterial({ uniforms, vertexShader: QUAD_VERT, fragmentShader: frag, depthTest: false, depthWrite: false });
 
 /* ------------------------------------------------------------------ */
 /* The Serpent                                                         */
@@ -432,7 +623,8 @@ export class Serpent {
     this.visible = true;
     this.mouse = { x: 0, y: 0, sx: 0, sy: 0 };
     // Driven externally by ScrollTrigger timelines.
-    this.state = { cx: 0, cy: 2.2, cz: 8.6, tx: 0, ty: 1.3, tz: 0.35, rot: 0, lift: 0 };
+    this.state = { cx: 0, cy: 2.2, cz: 8.6, tx: 0, ty: 1.3, tz: 0.35, rot: 0, lift: 0, gape: 0 };
+    this.jaw = 0;
     this.shakeUntil = 0;
     this.nextShake = 4;
     this.nextFlick = 2.2;
@@ -451,15 +643,15 @@ export class Serpent {
 
     const pmrem = new THREE.PMREMGenerator(r);
     this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    this.scene.environmentIntensity = 0.42;
+    this.scene.environmentIntensity = 0.55;
 
-    const key = new THREE.DirectionalLight(0xfff0d8, 2.4);
+    const key = new THREE.DirectionalLight(0xffffff, 3.0);
     key.position.set(3, 6, 5);
-    const rim = new THREE.DirectionalLight(0xe8b45c, 4.2);
+    const rim = new THREE.DirectionalLight(0xdfe9ff, 4.6);
     rim.position.set(-5, 3, -6);
-    const rim2 = new THREE.DirectionalLight(0xf7d9a0, 2.2);
+    const rim2 = new THREE.DirectionalLight(0xffffff, 2.6);
     rim2.position.set(6, 1.5, -4);
-    const under = new THREE.DirectionalLight(0xc98f3a, 0.8);
+    const under = new THREE.DirectionalLight(0xb9c6de, 1.0);
     under.position.set(0, -4, 3);
     this.scene.add(key, rim, rim2, under, new THREE.HemisphereLight(0x2c2a33, 0x000000, 0.35));
 
@@ -473,6 +665,7 @@ export class Serpent {
     this.#buildDust();
 
     this.root.position.y = -0.15;
+    if (!lowPower) this.#buildPost();
     this.resize();
     this.#update(0);
   }
@@ -529,6 +722,8 @@ export class Serpent {
       uTailA: { value: this.tailA },
       uBump: { value: 0.0065 },
       uGlow: { value: 0 },
+      uTime: { value: 0 },
+      uJaw: { value: 0 },
     };
     const mat = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
@@ -562,7 +757,7 @@ export class Serpent {
       roughness: 0.15,
       clearcoat: 1,
       clearcoatRoughness: 0.02,
-      emissive: new THREE.Color('#3b2406'),
+      emissive: new THREE.Color('#1b2734'),
       emissiveIntensity: 0.6,
     });
     const eyeGeo = new THREE.SphereGeometry(0.095, 48, 32);
@@ -581,6 +776,76 @@ export class Serpent {
       nostril.position.set(sx * 0.17, 0.1, 0.8);
       this.head.add(nostril);
     }
+    // --- the gape: mouth lining, mandible + maxilla rigs, fangs and teeth ---
+    const mouthMat = new THREE.MeshPhysicalMaterial({
+      color: 0x6d1218,
+      roughness: 0.38,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.35,
+      sheen: 0.6,
+      sheenColor: new THREE.Color('#8d2f32'),
+    });
+    // The lining is hinged too: its floor drops with the mandible, its palate stays put.
+    const mouthGeo = new THREE.SphereGeometry(1, 48, 32);
+    mouthGeo.scale(0.3, 0.13, 0.62);
+    mouthGeo.translate(0, -0.035, 0.08);
+    const mp = mouthGeo.attributes.position;
+    const mJaw = new Float32Array(mp.count);
+    for (let i = 0; i < mp.count; i++) {
+      mJaw[i] = smooth(-0.04, -0.09, mp.getY(i)) * smooth(-0.62, -0.42, mp.getZ(i));
+    }
+    mouthGeo.setAttribute('aJaw', new THREE.BufferAttribute(mJaw, 1));
+    patchHinge(mouthMat, this.uniforms, 'sn-mouth');
+    this.head.add(new THREE.Mesh(mouthGeo, mouthMat));
+
+    const PIVOT = [0, -0.02, -0.58];
+    const ivory = new THREE.MeshPhysicalMaterial({
+      color: 0xfdf7e6,
+      roughness: 0.14,
+      clearcoat: 1,
+      clearcoatRoughness: 0.06,
+      metalness: 0.05,
+    });
+    this.mandible = new THREE.Group();
+    this.mandible.position.set(...PIVOT);
+    this.maxilla = new THREE.Group();
+    this.maxilla.position.set(...PIVOT);
+    this.head.add(this.mandible, this.maxilla);
+
+    // erectile fangs, carried by the maxilla
+    this.fangRig = new THREE.Group();
+    this.fangRig.position.set(0, -0.005, 0.4 + 0.58);
+    this.maxilla.add(this.fangRig);
+    const fangGeo = makeFang();
+    for (const sx of [-1, 1]) {
+      const fang = new THREE.Mesh(fangGeo, ivory);
+      fang.position.set(sx * 0.2, 0, 0);
+      fang.rotation.z = sx * 0.06;
+      this.fangRig.add(fang);
+    }
+    // small recurved teeth along both jaws
+    const toothGeo = makeTooth();
+    const jawWidth = (z) => 0.55 * (1 + 0.4 * Math.exp(-Math.pow((z + 0.38) / 0.36, 2))) * (1 - 0.47 * smooth(-0.1, 1, z)) * 0.78;
+    for (let i = 0; i < 8; i++) {
+      const z = -0.12 + i * 0.115;
+      for (const sx of [-1, 1]) {
+        const lower = new THREE.Mesh(toothGeo, ivory);
+        lower.scale.setScalar(1 - i * 0.05);
+        lower.position.set(sx * jawWidth(z), -0.09 + 0.02, z + 0.58);
+        lower.rotation.x = -0.25;
+        lower.rotation.z = sx * -0.12;
+        this.mandible.add(lower);
+        if (i > 1) {
+          const upper = new THREE.Mesh(toothGeo, ivory);
+          upper.scale.setScalar(0.85 - i * 0.04);
+          upper.position.set(sx * jawWidth(z) * 0.92, 0.01 + 0.02, z + 0.58);
+          upper.rotation.x = Math.PI + 0.2;
+          upper.rotation.z = sx * 0.12;
+          this.maxilla.add(upper);
+        }
+      }
+    }
+
     this.tongue = makeTongue();
     this.tongue.position.set(0, -0.07, 0.78);
     this.tongue.scale.setScalar(1 / HEAD_SCALE);
@@ -614,7 +879,7 @@ export class Serpent {
         opacity: 0.55,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
-        color: 0xe6c27a,
+        color: 0xdce8ff,
       })
     );
     this.scene.add(this.dust);
@@ -639,6 +904,15 @@ export class Serpent {
     // Keep the whole coil in frame on portrait screens.
     this.camera.fov = w / h < 0.8 ? 52 : w / h < 1.2 ? 42 : 34;
     this.camera.updateProjectionMatrix();
+    if (this.sceneRT) {
+      const dpr = this.renderer.getPixelRatio();
+      const bw = Math.max(2, Math.round(w * dpr));
+      const bh = Math.max(2, Math.round(h * dpr));
+      this.sceneRT.setSize(bw, bh);
+      for (const t of [this.rtBright, this.rtTmp, this.rtGlow, this.rtS1, this.rtS2]) {
+        t.setSize(Math.max(2, bw >> 2), Math.max(2, bh >> 2));
+      }
+    }
   }
 
   #update(t) {
@@ -741,7 +1015,20 @@ export class Serpent {
     this.head.rotateX(0.12 - m.sy * 0.1);
     this.head.position.copy(hp).addScaledVector(ht, 0.26);
 
-    // --- tongue flicks
+    // --- the strike: jaws open while the tail buzzes, or when the page asks
+    // A snarl, not a full gape — past ~0.5 the mandible reads as a shell.
+    const strikeEnv = shaking ? 0.34 + 0.12 * Math.sin(t * 7.5) : 0;
+    const jawTarget = Math.min(0.5, Math.max(this.state.gape || 0, strikeEnv));
+    this.jaw += (jawTarget - this.jaw) * 0.12;
+    const jawA = this.jaw * 0.62;
+    this.uniforms.uJaw.value = jawA;
+    this.uniforms.uTime.value = t;
+    this.mandible.rotation.x = jawA;
+    this.maxilla.rotation.x = -jawA * 0.3;
+    this.fangRig.rotation.x = 0.12 - this.jaw * 0.95;
+
+    // --- tongue flicks (only with the mouth near-closed)
+    this.tongue.visible = this.jaw < 0.3;
     if (t > this.nextFlick) {
       this.flickStart = t;
       this.nextFlick = t + 2.4 + Math.random() * 3.2;
@@ -781,6 +1068,73 @@ export class Serpent {
     this.camera.lookAt(st.tx, st.ty, st.tz);
   }
 
+  #buildPost() {
+    const rt = (w, h, depth) =>
+      new THREE.WebGLRenderTarget(w, h, { type: THREE.HalfFloatType, depthBuffer: depth, stencilBuffer: false });
+    this.sceneRT = rt(2, 2, true);
+    this.sceneRT.texture.colorSpace = THREE.SRGBColorSpace;
+    this.rtBright = rt(2, 2, false);
+    this.rtTmp = rt(2, 2, false);
+    this.rtGlow = rt(2, 2, false);
+    this.rtS1 = rt(2, 2, false);
+    this.rtS2 = rt(2, 2, false);
+
+    this.qBright = new FullScreenQuad(quadMat(BRIGHT_FRAG, { tDiffuse: { value: null }, uThresh: { value: 0.8 } }));
+    this.qBlur = new FullScreenQuad(quadMat(BLUR_FRAG, { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2() } }));
+    this.qStreak = new FullScreenQuad(quadMat(STREAK_FRAG, { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2() } }));
+    this.qComp = new FullScreenQuad(
+      quadMat(COMP_FRAG, {
+        tScene: { value: null },
+        tGlow: { value: null },
+        tS1: { value: null },
+        tS2: { value: null },
+        uGlowAmt: { value: 0.34 },
+        uStarAmt: { value: 0.22 },
+      })
+    );
+  }
+
+  #renderPost() {
+    const r = this.renderer;
+    const { qBright, qBlur, qStreak, qComp } = this;
+    r.setRenderTarget(this.sceneRT);
+    r.clear();
+    r.render(this.scene, this.camera);
+
+    const w = this.rtBright.width;
+    const h = this.rtBright.height;
+    qBright.material.uniforms.tDiffuse.value = this.sceneRT.texture;
+    r.setRenderTarget(this.rtBright);
+    qBright.render(r);
+
+    // soft glow
+    qBlur.material.uniforms.tDiffuse.value = this.rtBright.texture;
+    qBlur.material.uniforms.uDir.value.set(1 / w, 0);
+    r.setRenderTarget(this.rtTmp);
+    qBlur.render(r);
+    qBlur.material.uniforms.tDiffuse.value = this.rtTmp.texture;
+    qBlur.material.uniforms.uDir.value.set(0, 1 / h);
+    r.setRenderTarget(this.rtGlow);
+    qBlur.render(r);
+
+    // crossed streaks -> 4-point stars
+    qStreak.material.uniforms.tDiffuse.value = this.rtBright.texture;
+    qStreak.material.uniforms.uDir.value.set(1.15 / w, 0);
+    r.setRenderTarget(this.rtS1);
+    qStreak.render(r);
+    qStreak.material.uniforms.uDir.value.set(0, 1.15 / h);
+    r.setRenderTarget(this.rtS2);
+    qStreak.render(r);
+
+    const u = qComp.material.uniforms;
+    u.tScene.value = this.sceneRT.texture;
+    u.tGlow.value = this.rtGlow.texture;
+    u.tS1.value = this.rtS1.texture;
+    u.tS2.value = this.rtS2.texture;
+    r.setRenderTarget(null);
+    qComp.render(r);
+  }
+
   /** Compile shaders up-front so the first scroll is smooth. */
   warmup() {
     this.renderer.compile(this.scene, this.camera);
@@ -794,7 +1148,8 @@ export class Serpent {
       this.clock.update();
       const t = this.clock.getElapsed();
       this.#update(t);
-      this.renderer.render(this.scene, this.camera);
+      if (this.sceneRT) this.#renderPost();
+      else this.renderer.render(this.scene, this.camera);
     };
     loop();
   }

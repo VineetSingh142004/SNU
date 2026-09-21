@@ -2,7 +2,7 @@
 
 Premium website for **Sigma Nu — Delta Theta Chapter, Knox College**: the oldest continuously running chapter of Sigma Nu in the world.
 
-Black, white and gold, built around a real-time 3D coiled rattlesnake (the Sigma Nu serpent), with scroll-driven zooms, a curved 3D photo ring and a horizontal "Tenets" journey.
+Black, white and the chapter's own gold, built around a real-time 3D coiled rattlesnake (the Sigma Nu serpent) that bares its fangs as you scroll in — plus scroll-driven zooms, a curved 3D photo ring, a horizontal "Tenets" journey, and the chapter's own poster art from @sigmanu.dt.
 
 ## Run it
 
@@ -23,10 +23,12 @@ npm run preview   # serve the built site locally
 | `src/emblem.js` | Line-art serpent drawn by the loader |
 | `src/styles.css` | Design tokens, typography, layout, responsive rules |
 | `public/img/` | Photos (WebP). Sources and licenses are in `public/credits.json` and the footer's "Photo credits" |
+| `public/img/posters/` | The chapter's own Instagram poster art (Fall Rush, crest, origins, legacy, brotherhood) |
 
 ## Before going live
 
 - **Members** (`#brothers` in `index.html`): names and portraits are placeholders. Swap in the real Executive Council.
 - **Calendar** (`#calendar`): dates are a sample Fall 2026 schedule. Edit them to match the chapter's.
 - **Rush form**: front-end only. Point it at a form service (Formspree, Netlify Forms, Google Forms) to receive submissions.
+- **Posters**: cropped from Instagram screenshots, so they top out around 923px wide. If you have the original exports, drop them into `public/img/posters/` for a sharper result.
 - **Photos**: stock images are CC0 or openly licensed. Replace them with chapter photos whenever you have them; keep `credits.json` in sync.

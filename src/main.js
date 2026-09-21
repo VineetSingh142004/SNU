@@ -6,6 +6,7 @@ import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/gfs-didot/400.css';
+import '@fontsource/pirata-one/400.css';
 import './styles.css';
 
 import gsap from 'gsap';
@@ -63,6 +64,23 @@ function splitWords(el) {
 
 $$('[data-chars]').forEach(splitChars);
 $$('[data-words]').forEach(splitWords);
+
+/* Scatter 4-point diamond flares over an element, poster-style. */
+function sparkle(el, count = 4) {
+  for (let i = 0; i < count; i++) {
+    const sp = document.createElement('i');
+    sp.className = 'spark';
+    sp.style.setProperty('--s', `${12 + Math.random() * 26}px`);
+    sp.style.setProperty('--d', `${Math.random() * 3.4}s`);
+    sp.style.left = `${6 + Math.random() * 88}%`;
+    sp.style.top = `${6 + Math.random() * 88}%`;
+    el.append(sp);
+  }
+}
+$$('[data-sparks]').forEach((el) => {
+  if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+  sparkle(el, +el.dataset.sparks || 4);
+});
 
 /* ------------------------------------------------------------------ */
 /* Smooth scroll                                                       */
@@ -233,7 +251,14 @@ function buildScroll() {
       end: '+=120%',
       pin: true,
       scrub: true,
-      onUpdate: (s) => setPose(POSES.hero, POSES.heroClose, s.progress),
+      onUpdate: (s) => {
+        setPose(POSES.hero, POSES.heroClose, s.progress);
+        // the serpent bares its fangs as the camera closes in
+        if (serpent) serpent.state.gape = Math.max(0, (s.progress - 0.55) / 0.45) * 0.45;
+      },
+      // ...and closes them again once the hero is behind us
+      onLeave: () => serpent && (serpent.state.gape = 0),
+      onLeaveBack: () => serpent && (serpent.state.gape = 0),
     },
   });
   heroTl
@@ -359,6 +384,22 @@ function buildScroll() {
 
   /* --- 08 Tenets: horizontal journey --- */
   buildTenets();
+
+  /* --- 07b Dispatches --- */
+  ScrollTrigger.batch('.poster', {
+    start: 'top 92%',
+    once: true,
+    onEnter: (els) =>
+      gsap.from(els, { y: 60, opacity: 0, stagger: 0.08, duration: 1.3, ease: 'expo.out' }),
+  });
+  gsap.from('.means__list li', {
+    x: -30,
+    opacity: 0,
+    stagger: 0.09,
+    duration: 1.1,
+    ease: 'expo.out',
+    scrollTrigger: { trigger: '.means__list', start: 'top 85%' },
+  });
 
   /* --- 09 Calendar --- */
   ScrollTrigger.batch('.event', {

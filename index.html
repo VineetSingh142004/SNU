@@ -40,7 +40,10 @@
         <span class="header__burger"><i></i><i></i></span><span class="header__menu-label">Menu</span>
       </button>
       <a class="header__logo" href="#top" aria-label="Sigma Nu Delta Theta — home">
-        <span class="header__greek">ΣΝ</span>
+        <span class="header__logo-row">
+          <span class="header__greek">ΣΝ</span>
+          <span class="header__dt" aria-hidden="true"><i>Δ</i><i>Θ</i></span>
+        </span>
         <span class="header__sub">Delta Theta</span>
       </a>
       <a class="header__cta" href="#rush" data-cursor="link">Rush <span>ΣΝ</span></a>
@@ -54,10 +57,11 @@
           <li><a href="#history" data-img="img/knox-1900s.webp"><em>ii.</em><span>History</span></a></li>
           <li><a href="#house" data-img="img/g-sparklers.webp"><em>iii.</em><span>Life in the House</span></a></li>
           <li><a href="#tenets" data-img="img/truth.webp"><em>iv.</em><span>The Tenets</span></a></li>
-          <li><a href="#calendar" data-img="img/white-rose.webp"><em>v.</em><span>Calendar</span></a></li>
-          <li><a href="#honors" data-img="img/fireworks.webp"><em>vi.</em><span>Honors</span></a></li>
-          <li><a href="#brothers" data-img="img/legion-center.webp"><em>vii.</em><span>The Legion</span></a></li>
-          <li><a href="#rush" data-img="img/rush-card.webp"><em>viii.</em><span>Rush</span></a></li>
+          <li><a href="#feed" data-img="img/posters/logo.webp"><em>v.</em><span>Dispatches</span></a></li>
+          <li><a href="#calendar" data-img="img/white-rose.webp"><em>vi.</em><span>Calendar</span></a></li>
+          <li><a href="#honors" data-img="img/fireworks.webp"><em>vii.</em><span>Honors</span></a></li>
+          <li><a href="#brothers" data-img="img/legion-center.webp"><em>viii.</em><span>The Legion</span></a></li>
+          <li><a href="#rush" data-img="img/posters/fall-rush.webp"><em>ix.</em><span>Rush</span></a></li>
         </ol>
         <div class="menu__preview"><img alt="" src="img/about-main.webp" /></div>
         <div class="menu__foot">
@@ -71,7 +75,7 @@
       <!-- ============ 01 HERO ============ -->
       <section class="hero dark" id="top" data-serpent>
         <div class="hero__glow" aria-hidden="true"></div>
-        <div class="hero__title">
+        <div class="hero__title" data-sparks="5">
           <p class="eyebrow hero__eyebrow"><span>Sigma Nu Fraternity</span><span>Delta Theta Chapter</span></p>
           <h1>
             <span class="script hero__script" data-chars>Excelling with</span>
@@ -83,7 +87,7 @@
         </a>
         <p class="hero__place">Knox College <i>·</i> Galesburg, Illinois <i>·</i> Est. 1869</p>
         <a class="hero__card" href="#rush" data-cursor="link">
-          <span class="hero__card-img"><img src="img/rush-card.webp" alt="" /></span>
+          <span class="hero__card-img"><img src="img/posters/fall-rush.webp" alt="" /></span>
           <span class="hero__card-text"><b>Rush</b><span>Fall 2026</span><em>Join the Legion</em></span>
         </a>
       </section>
@@ -195,6 +199,65 @@
             <span class="house__label" data-ring-label>Golden hour</span>
             <span class="eyebrow house__hint">Scroll or drag</span>
           </div>
+        </div>
+      </section>
+
+      <!-- ============ 07b DISPATCHES — the chapter's own poster art ============ -->
+      <section class="feed" id="feed">
+        <header class="section-head section-head--dark">
+          <span class="script" data-chars>From the</span>
+          <h2 class="display display--lg" data-chars>Dispatches</h2>
+          <p class="eyebrow">Straight from <i>·</i> @sigmanu.dt</p>
+        </header>
+        <div class="feed__grid" data-sparks="7">
+          <a class="poster" href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">
+            <img src="img/posters/logo.webp" alt="Sigma Nu Delta Theta crest poster with white serpents" loading="lazy" />
+            <figcaption>Sigma Nu — Delta Theta<span>Est. 1869</span></figcaption>
+          </a>
+          <a class="poster" href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">
+            <img src="img/posters/values.webp" alt="Poster listing the values of Sigma Nu: love, honor, truth" loading="lazy" />
+            <figcaption>The values we were founded on<span>Love · Honor · Truth</span></figcaption>
+          </a>
+          <a class="poster" href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">
+            <img src="img/posters/origins.webp" alt="Poster about Sigma Nu's military origins at VMI with the three founders" loading="lazy" />
+            <figcaption>Military origins<span>VMI · Lexington, 1869</span></figcaption>
+          </a>
+          <a class="poster" href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">
+            <img src="img/posters/legacy.webp" alt="Delta Theta legacy poster with serpents over the Knox College building" loading="lazy" />
+            <figcaption>Delta Theta legacy<span>Lombard → Knox</span></figcaption>
+          </a>
+          <a class="poster" href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">
+            <img src="img/posters/brotherhood.webp" alt="Poster asking what brotherhood means here" loading="lazy" />
+            <figcaption>What brotherhood means here<span>Five promises</span></figcaption>
+          </a>
+          <a class="poster" href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">
+            <img src="img/posters/continues.webp" alt="Poster reading 150+ years of tradition, a legacy that continues" loading="lazy" />
+            <figcaption>A legacy that continues<span>150+ years</span></figcaption>
+          </a>
+        </div>
+        <p class="feed__foot"><a href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">Follow @sigmanu.dt</a></p>
+      </section>
+
+      <!-- ============ 07c WHAT BROTHERHOOD MEANS HERE ============ -->
+      <section class="means" id="means">
+        <div class="means__grid">
+          <div>
+            <h2 data-lines>
+              <span class="line"><span>What</span></span>
+              <span class="line"><span><em>brotherhood</em></span></span>
+              <span class="line"><span>means here?</span></span>
+            </h2>
+            <ul class="means__list">
+              <li>Leadership</li>
+              <li>Service</li>
+              <li>Academic Excellence</li>
+              <li>Community</li>
+              <li>Lifelong Connection</li>
+            </ul>
+          </div>
+          <figure class="means__poster" data-parallax="0.08">
+            <img src="img/posters/brotherhood.webp" alt="Chapter poster: what brotherhood means here" loading="lazy" />
+          </figure>
         </div>
       </section>
 
@@ -344,6 +407,8 @@
           <span class="script" data-chars>The</span>
           <h2 class="display display--lg" data-chars>Honors</h2>
         </header>
+        <p class="honors__stars" aria-hidden="true">★ ★ ★</p>
+        <p class="honors__tagline" data-sparks="3">150+ years of tradition. <em>A legacy that continues.</em></p>
         <div class="stats">
           <div class="stat"><b data-counter="1869">1869</b><span>Sigma Nu founded at the Virginia Military Institute</span></div>
           <div class="stat"><b data-counter="1891">1891</b><span>Delta Theta enters the Legion</span></div>
@@ -420,8 +485,9 @@
 
       <!-- ============ 14 RUSH ============ -->
       <section class="rush light" id="rush">
-        <div class="rush__grid">
+        <div class="rush__grid rush__grid--poster">
           <div class="rush__intro">
+            <p class="rush__blackletter">Fall Rush</p>
             <span class="script" data-chars>Join the</span>
             <h2 class="display display--lg" data-chars>Legion</h2>
             <p class="body">
@@ -433,7 +499,10 @@
               <div><dt class="eyebrow">Follow</dt><dd><a href="https://www.instagram.com/sigmanu.dt/" target="_blank" rel="noopener" data-cursor="link">@sigmanu.dt</a></dd></div>
             </dl>
           </div>
-          <form class="rush__form" novalidate>
+          <figure class="rush__poster" data-sparks="6">
+            <img src="img/posters/fall-rush.webp" alt="Fall Rush poster: a diamond-set rattlesnake and the Sigma Nu hand sign" loading="lazy" />
+          </figure>
+          <form class="rush__form rush__form--poster" novalidate>
             <label class="field"><span>Full name</span><input name="name" autocomplete="name" required /></label>
             <label class="field"><span>Knox email</span><input name="email" type="email" autocomplete="email" required /></label>
             <div class="field-row">
